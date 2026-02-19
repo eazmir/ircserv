@@ -16,6 +16,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
+	./$(NAME) 8080 0000
 clean:
 	rm -f $(OBJS)
 

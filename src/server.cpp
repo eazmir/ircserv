@@ -6,7 +6,7 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:17 by eazmir            #+#    #+#             */
-/*   Updated: 2026/02/18 11:37:31 by eazmir           ###   ########.fr       */
+/*   Updated: 2026/02/19 01:12:20 by eazmir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@ server::server()
 {
     this->_password.clear();
     this->_port = 0;
+    this->status = false;
 }
 
 void server::setup_address()
@@ -42,9 +43,11 @@ void server::bind_socket()
 
 void server::setup_poll()
 {
-    this->_fds[0].fd = this->_fd_server;
-    this->_fds[0].events = POLLIN;
-    this->_nfds = 1;
+  pollfd __poll;
+
+  __poll.fd = this->_fd_server;
+  __poll.events = POLLIN;
+  _pfds.push_back(__poll);
 }
 
 void server::init()
@@ -66,15 +69,25 @@ void server::handleEvent()
 {
     while (true)
     {
-        poll(_fds,_nfds,-1);
-        for (size_t _index = 0; _index < _nfds;_index++)
+        poll(_pfds.data(),_pfds.size(),-1);
+        for (size_t client_index = 0; client_index < _pfds.size();client_index++)
         {
-            if (this->_fds[_index].revents & POLLIN)
+            if (this->_pfds[client_index].revents & POLLIN)
             {
-                if (this->_fd_server == this->_fds[_index].fd)
+                if (this->_fd_server == this->_pfds[client_index].fd)
+                {
                     this->accept_connection();
+                    client_index++;
+                }
                 else
-                    this->recv_data();
+                {
+                    this->recv_data(client_index);
+                    if (this->status)
+                    {
+                        this->status = false;
+                        client_index--;
+                    }
+                }   
             }
         }
     }
@@ -82,31 +95,46 @@ void server::handleEvent()
 
 void server::accept_connection()
 {
-    client  _clnt;
-    int     _clnt_;
-
-    _clnt_ = accept(_fd_server,NULL,NULL);
-    _fds[_nfds].fd = _clnt_;
-    _fds[_nfds].events = POLLIN;
-    _nfds++;
-    std::cout << "New client connected. FD: " << _clnt_ << std::endl;
+    client  __client;
+    pollfd  _poll;
+    int     client_fd;
+    
+    
+     client_fd = accept(_fd_server,NULL,NULL);
+    _poll.fd = client_fd;
+    _poll.events = POLLIN;
+    _pfds.push_back(_poll);
     ////////////////////////////////////////////////////////////////
-    _clnt.fd = _clnt_;
-    _clnt.pass_ok = false;
-    _clnt.user_ok = false;
-    _clnt.regestred = false;
-    _client.push_back(_clnt);
+    std::cout << "New client connected. FD: " << client_fd << std::endl;
+    ////////////////////////////////////////////////////////////////
+    __client.fd = client_fd;
+    __client.pass_ok = false;
+    __client.user_ok = false;
+    __client.regestred = false;
+    /////////////////////////////////////////////////////////////////
+    _client.push_back(__client);
 }
 
-void server::recv_data()
+
+void server::recv_data(size_t &index)
 {
-    client  _clnt;
-    int     byte;
-    char    buffer[1024];
-    
-    byte = recv(_client[_index].fd,buffer,sizeof(buffer),0);
-    std::cout<<"\n";
-    std::cout<<"message from: "<<_client[_index].fd;
-    _clnt.buffer = buffer;
-    _client.push_back(_clnt);
+    int n;
+    char buffer[1024];
+
+    n = recv(_pfds[index].fd,buffer,sizeof(buffer) - 1,0);
+    if (n <= 0)
+    {
+        this->disconnect_client(index);
+        this->status = true;
+    }
+    else
+        _client[index -1].buffer += std::string(buffer,n);
+}
+
+void server::disconnect_client(size_t &index)
+{
+    close(_pfds[index].fd);
+    _pfds.erase(_pfds.begin() + index);
+    _client.erase(_client.begin() + index);
+    std::cout << "Client disconnected" << std::endl;
 }

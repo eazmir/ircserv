@@ -6,7 +6,7 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:01 by eazmir            #+#    #+#             */
-/*   Updated: 2026/02/18 11:39:18 by eazmir           ###   ########.fr       */
+/*   Updated: 2026/02/19 00:59:31 by eazmir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include <vector>
 #include <algorithm>
 #include <string>
+#include <fcntl.h>
 ///////////////////////////////////////////////////////////
 #define BUFFER_SIZE 1024
 #define MAX_CLIENT 1000
@@ -41,14 +42,13 @@ class  server
     private:
         int _port;
         int _fd_server;
-        size_t _nfds;
-        size_t _index;
+        bool status;
         ///////////////////////////////////////////////////
         std::string _password;
         std::vector<client> _client;
         ///////////////////////////////////////////////////
         struct sockaddr_in _addr;
-        struct pollfd _fds[1024];
+        std::vector<pollfd> _pfds;
     public:
         server();
         server(int port,std::string password);
@@ -60,6 +60,7 @@ class  server
         void create_socket(void);
         void setup_poll(void);
         void init(void);
-        void accept_connection(void);
-        void recv_data(void);
+        void accept_connection();
+        void recv_data(size_t &index);
+        void disconnect_client(size_t &index);
 };
