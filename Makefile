@@ -9,6 +9,7 @@ DIR_SRC  = src
 FILES = \
 	$(DIR_MAIN)/main.cpp \
 	$(DIR_SRC)/server.cpp\
+	$(DIR_SRC)/client.cpp \
 
 OBJS = $(FILES:.cpp=.o)
 
@@ -16,7 +17,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
-	./$(NAME) 8080 0000
+	./$(NAME) 4444 0000
 clean:
 	rm -f $(OBJS)
 

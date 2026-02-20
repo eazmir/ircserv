@@ -6,11 +6,13 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:17 by eazmir            #+#    #+#             */
-/*   Updated: 2026/02/19 01:12:20 by eazmir           ###   ########.fr       */
+/*   Updated: 2026/02/20 17:02:06 by eazmir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/server.hpp"
+#include "../include/client.hpp"
+#include <cstdio>
 
 server::server()
 {
@@ -29,16 +31,34 @@ void server::setup_address()
 void server::create_socket()
 {
     this->_fd_server = socket(AF_INET, SOCK_STREAM, 0);
+    if (this->_fd_server < 0)
+    {
+        std::cerr << "Error: Failed to create socket" << std::endl;
+        exit(1);
+    }
 }
 
 void server::start_listning()
 {
-    listen(this->_fd_server,10);
+    if (listen(this->_fd_server, 10) < 0)
+    {
+        std::cerr << "Error: Failed to listen on socket" << std::endl;
+        perror("listen");
+        exit(1);
+    }
+    std::cout << "Server listening on port " << _port << std::endl;
 }
 
 void server::bind_socket()
 {
-    bind(this->_fd_server,(struct sockaddr*)&_addr,sizeof(_addr));
+    int opt = 1;
+    setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+    if (bind(this->_fd_server,(struct sockaddr*)&_addr,sizeof(_addr)) < 0)
+    {
+        std::cerr << "Error: Failed to bind socket to port " << _port << std::endl;
+        perror("bind");
+        exit(1);
+    }
 }
 
 void server::setup_poll()
@@ -61,6 +81,7 @@ void server::init()
 
 server::server(int port,std::string password):_port(port),_password(password)
 {
+    channel = new managerchannel(_clients);
     this->init();
     this->handleEvent();
 }
@@ -112,7 +133,7 @@ void server::accept_connection()
     __client.user_ok = false;
     __client.regestred = false;
     /////////////////////////////////////////////////////////////////
-    _client.push_back(__client);
+    _clients[client_fd] = __client;
 }
 
 
@@ -121,20 +142,54 @@ void server::recv_data(size_t &index)
     int n;
     char buffer[1024];
 
-    n = recv(_pfds[index].fd,buffer,sizeof(buffer) - 1,0);
+    int fd = _pfds[index].fd;
+
+    n = recv(fd, buffer, sizeof(buffer) - 1, 0);
     if (n <= 0)
     {
         this->disconnect_client(index);
         this->status = true;
+        return;
     }
-    else
-        _client[index -1].buffer += std::string(buffer,n);
+
+    if (fd == _fd_server) // skip server socket
+        return;
+
+    // Find client in map
+    std::map<int, client>::iterator it = _clients.find(fd);
+    if (it == _clients.end())
+        return;
+    it->second.buffer += std::string(buffer, n);
+    std::string line;
+    while (!(line = Extract_data(it->second)).empty())
+    {
+        channel->handle_input(line, it->second);
+    }
 }
 
 void server::disconnect_client(size_t &index)
 {
-    close(_pfds[index].fd);
+    int fd = _pfds[index].fd;
+    close(fd);
+    _clients.erase(fd);
     _pfds.erase(_pfds.begin() + index);
-    _client.erase(_client.begin() + index);
-    std::cout << "Client disconnected" << std::endl;
+    std::cout << "Client disconnected FD: " << fd << std::endl;
+}
+
+std::string server::Extract_data(client &c)
+{
+    std::string &buf = c.buffer;
+
+    size_t pos = buf.find('\n');
+    if (pos == std::string::npos)
+        return "";
+
+    std::string line = buf.substr(0, pos);
+    buf.erase(0, pos + 1);
+
+    // Remove trailing '\r' if present
+    if (!line.empty() && line[line.size() - 1] == '\r')
+        line.erase(line.size() - 1, 1);
+
+    return line;
 }
