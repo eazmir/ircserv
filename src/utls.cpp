@@ -17,7 +17,6 @@ std::string Utils::strTrim(const std::string &str)
     return (str.substr(start, end - start));
 }
 
-#include <iomanip>
 
 void Utils::printClientsInfo(const std::map<int, client> &clients)
 {
