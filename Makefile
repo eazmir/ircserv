@@ -19,7 +19,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) $(OBJS) -o $(NAME)
-	./$(NAME) 4443 0000
+	./$(NAME) 4444 0000
 clean:
 	rm -f $(OBJS)
 

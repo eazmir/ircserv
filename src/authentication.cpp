@@ -6,7 +6,7 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 00:47:05 by eazmir            #+#    #+#             */
-/*   Updated: 2026/02/21 13:42:34 by eazmir           ###   ########.fr       */
+/*   Updated: 2026/03/09 20:43:42 by eazmir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -63,9 +63,6 @@ std::string authentication::Extract_data(const std::string &data)
     size_t pos = data.find(':');
     if (pos == std::string::npos)
         return "";
-    // std::string afterColon = data.substr(pos + 1);
-    // std::cout<<"---------Strim "<<Utils::strTrim(afterColon)<<std::endl;
-    // return Utils::strTrim(afterColon);
     return (data.substr(pos + 1));
 }
 

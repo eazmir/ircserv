@@ -17,25 +17,40 @@ std::string Utils::strTrim(const std::string &str)
     return (str.substr(start, end - start));
 }
 
-void Utils::printClientsInfo(const std::map<int, client> &clients) 
+#include <iomanip>
+
+void Utils::printClientsInfo(const std::map<int, client> &clients)
 {
-    if (clients.empty()) 
+    if (clients.empty())
     {
         std::cout << "No clients connected" << std::endl;
         return;
     }
-    for (std::map<int, client>::const_iterator it = clients.begin(); it != clients.end(); ++it) 
+    std::cout << std::left;
+    std::cout << "----------------------------------------------------------"
+              << std::endl;
+    std::cout << "| " << std::setw(4)  << "FD"
+              << "| " << std::setw(5)  << "Pass"
+              << "| " << std::setw(5)  << "User"
+              << "| " << std::setw(5)  << "Nick"
+              << "| " << std::setw(4)  << "Reg"
+              << "| " << std::setw(10) << "Nickname"
+              << "| " << std::setw(10) << "Username"
+              << "|" << std::endl;
+
+    std::cout << "----------------------------------------------------------"
+              << std::endl;
+    for (std::map<int, client>::const_iterator it = clients.begin(); it != clients.end(); ++it)
     {
         const client &c = it->second;
-        std::cout << "FD: " << it->first << std::endl;
-        std::cout << "Status: " << c.status << std::endl;
-        std::cout << "Pass OK: " << c.pass_ok << std::endl;
-        std::cout << "User OK: " << c.user_ok << std::endl;
-        std::cout << "Nick OK: " << c.nick_ok << std::endl;
-        std::cout << "Registered: " << c.regestred<< std::endl;
-        std::cout << "Nickname: " << c.nickname << std::endl;
-        std::cout << "Username: " << c.username << std::endl;
-        std::cout << "Real Name: " << c.realname << std::endl;
-        std::cout << "--------------------------" << std::endl;
+
+        std::cout << "| " << std::setw(4)  << it->first
+                  << "| " << std::setw(5)  << c.pass_ok
+                  << "| " << std::setw(5)  << c.user_ok
+                  << "| " << std::setw(5)  << c.nick_ok
+                  << "| " << std::setw(4)  << c.regestred
+                  << "| " << std::setw(10) << c.nickname
+                  << "| " << std::setw(10) << c.username
+                  << "|" << std::endl;
     }
 }
