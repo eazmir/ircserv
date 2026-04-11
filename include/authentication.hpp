@@ -6,7 +6,7 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 02:45:56 by eazmir            #+#    #+#             */
-/*   Updated: 2026/02/21 13:27:17 by eazmir           ###   ########.fr       */
+/*   Updated: 2026/04/11 15:44:06 by eazmir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,7 @@ class authentication
 {
     private:
         std::string _serverPassword;
+        bool status;
     public:
     authentication();
     authentication(std::string pass);

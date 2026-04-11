@@ -6,14 +6,14 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/21 00:47:05 by eazmir            #+#    #+#             */
-/*   Updated: 2026/03/09 20:43:42 by eazmir           ###   ########.fr       */
+/*   Updated: 2026/04/11 15:48:35 by eazmir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/server.hpp"
 #include "../include/utls.hpp"
 
-authentication::authentication()
+authentication::authentication():status(false)
 {}
 
 authentication::authentication(std::string pass):_serverPassword(pass)
@@ -68,12 +68,23 @@ std::string authentication::Extract_data(const std::string &data)
 
 void authentication::tryRegister(client &c,const std::string &input)
 {
+    // if (input.compare(0,4,"PASS") != 0 && input.compare(0,4,"NICK") != 0 && input.compare(0,4,"USER") != 0)
+        // return;
     if (input.compare(0,4,"PASS")== 0)
+    {
         handlePass(c,Extract_data(input));
+        status = true;
+    }
     if (input.compare(0,4,"USER") == 0)
+    {
         handleUser(c,Extract_data(input));
+        status = true;
+    }
     if (input.compare(0,4,"NICK") == 0)
+    {
         handleNick(c,Extract_data(input));
+        status = true;
+    }
     checkRegistration(c);
 }
 void authentication::send_welcome(client &c)
@@ -87,9 +98,11 @@ void authentication::send_welcome(client &c)
 
 void authentication::checkRegistration(client &c)
 {
-    if (c.nick_ok && c.pass_ok && c.user_ok)
+    if (c.nick_ok && c.pass_ok && c.user_ok && status)
     {
-        c.regestred = true;
+        
         this->send_welcome(c);
+        c.regestred = true;
+        this->status = false;
     }
 }

@@ -6,7 +6,7 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:17 by eazmir            #+#    #+#             */
-/*   Updated: 2026/02/21 04:26:36 by eazmir           ###   ########.fr       */
+/*   Updated: 2026/04/11 16:21:03 by eazmir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -134,6 +134,7 @@ void server::accept_connection()
     __client.user_ok = false;
     __client.regestred = false;
     __client.status = false;
+      __client.hostname = getMachineName();
     /////////////////////////////////////////////////////////////////
     _clients[client_fd] = __client;
 }
@@ -194,4 +195,20 @@ std::string server::Extract_data(client &c)
         line.erase(line.size() - 1, 1);
 
     return line;
+}
+
+
+#include <unistd.h>
+#include <string>
+
+std::string getMachineName()
+{
+    char hostname[1024];
+
+    if (gethostname(hostname, sizeof(hostname)) == -1)
+        return "unknown";
+
+    hostname[sizeof(hostname) - 1] = '\0'; // safety
+
+    return std::string(hostname);
 }

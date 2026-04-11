@@ -6,7 +6,7 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:01 by eazmir            #+#    #+#             */
-/*   Updated: 2026/02/21 04:12:35 by eazmir           ###   ########.fr       */
+/*   Updated: 2026/04/11 16:18:18 by eazmir           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #define SERVER_HPP
 
 #include <string>
+#include <sstream>
 #include "authentication.hpp"
 #include <iostream>
 #include <cstring>
@@ -85,5 +86,5 @@ class  server
         void disconnect_client(size_t &index);
         std::string Extract_data(client &c);
 };
-
+std::string getMachineName();
 #endif
