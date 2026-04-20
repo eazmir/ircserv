@@ -6,7 +6,11 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:17 by eazmir            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2026/04/11 16:21:03 by eazmir           ###   ########.fr       */
+=======
+/*   Updated: 2026/04/12 16:19:28 by eazmir           ###   ########.fr       */
+>>>>>>> 04da670 (I ccc)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +24,10 @@ server::server()
     this->status = false;
 }
 
+server::~server()
+{
+    free(channel);
+}
 void server::setup_address()
 {
     _addr.sin_family = AF_INET;
@@ -32,8 +40,7 @@ void server::create_socket()
     this->_fd_server = socket(AF_INET, SOCK_STREAM, 0);
     if (this->_fd_server < 0)
     {
-        std::cerr << "Error: Failed to create socket" << std::endl;
-        exit(1);
+        throw std::runtime_error("Error: Failed to create socket\n");
     }
 }
 
@@ -41,9 +48,9 @@ void server::start_listning()
 {
     if (listen(this->_fd_server, 10) < 0)
     {
-        std::cerr << "Error: Failed to listen on socket" << std::endl;
-        perror("listen");
-        exit(1);
+        // std::cerr << "Error: Failed to listen on socket" << std::endl;
+        perror("listen: ");
+        throw std::runtime_error("Error: Failed to listen on socket\n");
     }
     std::cout << "Server listening on port " << _port << std::endl;
 }
@@ -54,9 +61,9 @@ void server::bind_socket()
     setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     if (bind(this->_fd_server,(struct sockaddr*)&_addr,sizeof(_addr)) < 0)
     {
-        std::cerr << "Error: Failed to bind socket to port " << _port << std::endl;
-        perror("bind");
-        exit(1);
+        // std::cerr << "Error: Failed to bind socket to port " << _port << std::endl;
+        perror("bind ");
+        throw std::runtime_error("Error: Failed to bind socket to port.!");
     }
 }
 

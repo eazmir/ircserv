@@ -17,14 +17,41 @@ std::string Utils::strTrim(const std::string &str)
     return (str.substr(start, end - start));
 }
 
+int Utils::check_port(const std::string& port)
+{
+    if (port.empty())
+        return (-1);
+    for (size_t i = 0; i < port.size(); i++) 
+    {
+        if (!std::isdigit(port[i]))
+            return (-1);
+    }
+    if (port.size() > 5)
+        return (-2);
+    int _port = std::atoi(port.c_str());
+    if (_port < 1 || _port > 65535)
+        return (-2);
+    if (_port < 1024 || _port > 49151)
+        return (-3);
+    return (_port);
+}
+
+int Utils::validatePort(const std::string& port)
+{
+    int result = check_port(port);
+    if (result == -1)
+        throw std::runtime_error("Port must contain digits only.");
+    if (result == -2)
+        throw std::runtime_error("Port must be between 1 and 65535.");
+    if (result == -3)
+        throw std::runtime_error("Use a safe port range (1024 - 49151).");
+    return result;
+}
 
 void Utils::printClientsInfo(const std::map<int, client> &clients)
 {
     if (clients.empty())
-    {
-        std::cout << "No clients connected" << std::endl;
-        return;
-    }
+        throw std::runtime_error("No clients connected");
     std::cout << std::left;
     std::cout << "----------------------------------------------------------"
               << std::endl;

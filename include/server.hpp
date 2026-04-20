@@ -6,7 +6,11 @@
 /*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:01 by eazmir            #+#    #+#             */
+<<<<<<< HEAD
 /*   Updated: 2026/04/11 16:18:18 by eazmir           ###   ########.fr       */
+=======
+/*   Updated: 2026/04/08 17:38:34 by eazmir           ###   ########.fr       */
+>>>>>>> 04da670 (I ccc)
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +21,7 @@
 #include <sstream>
 #include "authentication.hpp"
 #include <iostream>
+#include <climits>
 #include <cstring>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -38,7 +43,8 @@ class authentication;
 ///////////////////////////////////////////////////////////
 #define BUFFER_SIZE 1024
 #define MAX_CLIENT 1000
-///////////////////////////////////////////////////////////
+////////////////////////////////////////////////////////////
+
 struct client
 {
     std::string buffer;      // don,t care about this, just for storing incoming data until we get a full line
@@ -72,6 +78,7 @@ class  server
         std::vector<pollfd> _pfds;
     public:
         server();
+        ~server();
         server(int port,std::string password);
         ///////////////////////////////////////////////////
         void handleEvent(void);

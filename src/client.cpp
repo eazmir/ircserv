@@ -12,6 +12,7 @@ void managerchannel::handle_input(const std::string &input, client &c)
     this->auth.tryRegister(c,input);
     if (input.compare(0,5,"PRINT") == 0)
         Utils::printClientsInfo(_clients);
+<<<<<<< HEAD
     if (input.compare(0,4,"JOIN") == 0 || input.compare(0,3,"MSG") == 0)
     {
         handleJoin(input,c);
@@ -149,4 +150,15 @@ void managerchannel::handle_input(const std::string &input, client &c)
     if (!after.empty())
         msg.trailing = after;
     return msg;
+=======
+    // if (input.compare(0,4,"MSG") == 0)
+    // {
+    //     size_t pos = input.find(":") + 1;
+    //     if (pos != std::string::npos)
+    //     {
+    //         std::string msg = input.substr(pos);
+    //         send(c.fd,msg.c_str(),strlen(msg.c_str()),1); 
+    //     }
+    // }
+>>>>>>> 04da670 (I ccc)
 }
