@@ -1,20 +1,28 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utls.cpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: haitaabe <haitaabe@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/11 21:41:46 by haitaabe          #+#    #+#             */
+/*   Updated: 2026/04/21 18:46:09 by haitaabe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "../include/utls.hpp"
 #include "../include/server.hpp"
 
 std::string Utils::strTrim(const std::string &str) 
 {
-    size_t start = 0;
-    size_t end = str.size();
-    
-    if (str[start] != ' ' || str[start] != '\t')
+    size_t start = str.find_first_not_of(" \t\r\n");
+
+    if (start == std::string::npos) 
         return ""; 
-    // Trim start
-    while (start < end && (str[start] == ' ' || str[start] == '\t'))
-        start++;
-    // Trim end
-    while (end > start && (str[end - 1] == ' ' || str[end - 1] == '\t'))
-        end--;
-    return (str.substr(start, end - start));
+
+    size_t end = str.find_last_not_of(" \t\r\n");
+
+    return (str.substr(start, end - start + 1));
 }
 
 int Utils::check_port(const std::string& port)
@@ -51,9 +59,12 @@ int Utils::validatePort(const std::string& port)
 void Utils::printClientsInfo(const std::map<int, client> &clients)
 {
     if (clients.empty())
-        throw std::runtime_error("No clients connected");
+    {
+        std::cout << "No clients connected" << std::endl;
+        return;
+    }
     std::cout << std::left;
-    std::cout << "----------------------------------------------------------"
+    std::cout << "-----------------------------------------------------------------------"
               << std::endl;
     std::cout << "| " << std::setw(4)  << "FD"
               << "| " << std::setw(5)  << "Pass"
@@ -62,9 +73,10 @@ void Utils::printClientsInfo(const std::map<int, client> &clients)
               << "| " << std::setw(4)  << "Reg"
               << "| " << std::setw(10) << "Nickname"
               << "| " << std::setw(10) << "Username"
+              << "| " << std::setw(10) << "realname"
               << "|" << std::endl;
 
-    std::cout << "----------------------------------------------------------"
+    std::cout << "-----------------------------------------------------------------------"
               << std::endl;
     for (std::map<int, client>::const_iterator it = clients.begin(); it != clients.end(); ++it)
     {
@@ -77,6 +89,28 @@ void Utils::printClientsInfo(const std::map<int, client> &clients)
                   << "| " << std::setw(4)  << c.regestred
                   << "| " << std::setw(10) << c.nickname
                   << "| " << std::setw(10) << c.username
+                  << "| " << std::setw(10) << c.realname
                   << "|" << std::endl;
     }
+}
+
+std::string Utils::getTime()
+{
+    time_t now = time(0);
+    struct tm* tm_info = localtime(&now);
+    char buffer[9];
+    strftime(buffer, 9, "%H:%M:%S", tm_info);
+    return std::string(buffer);
+}
+
+std::string Utils::getMachineName()
+{
+    char hostname[1024];
+
+    if (gethostname(hostname, sizeof(hostname)) == -1)
+        return "unknown";
+
+    hostname[sizeof(hostname) - 1] = '\0'; // safety
+
+    return std::string(hostname);
 }

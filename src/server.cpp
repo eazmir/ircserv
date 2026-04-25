@@ -3,19 +3,21 @@
 /*                                                        :::      ::::::::   */
 /*   server.cpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: haitaabe <haitaabe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:17 by eazmir            #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2026/04/11 16:21:03 by eazmir           ###   ########.fr       */
-=======
-/*   Updated: 2026/04/12 16:19:28 by eazmir           ###   ########.fr       */
->>>>>>> 04da670 (I ccc)
+/*   Updated: 2026/04/17 11:43:27 by haitaabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../include/server.hpp"
 #include "../include/client.hpp"
+#include "../include/utls.hpp"
+
+server::~server()
+{
+    delete this->channel;
+}
 
 server::server()
 {
@@ -24,10 +26,6 @@ server::server()
     this->status = false;
 }
 
-server::~server()
-{
-    free(channel);
-}
 void server::setup_address()
 {
     _addr.sin_family = AF_INET;
@@ -40,7 +38,7 @@ void server::create_socket()
     this->_fd_server = socket(AF_INET, SOCK_STREAM, 0);
     if (this->_fd_server < 0)
     {
-        throw std::runtime_error("Error: Failed to create socket\n");
+        throw  std::runtime_error("Error: Failed to create socket");
     }
 }
 
@@ -48,11 +46,9 @@ void server::start_listning()
 {
     if (listen(this->_fd_server, 10) < 0)
     {
-        // std::cerr << "Error: Failed to listen on socket" << std::endl;
-        perror("listen: ");
-        throw std::runtime_error("Error: Failed to listen on socket\n");
+        throw  std::runtime_error("Error: Failed to listen on socket");
     }
-    std::cout << "Server listening on port " << _port << std::endl;
+    std::cout << "[" << Utils::getTime() << "] Server listening [::0]:" << _port << " (socket " << this->_fd_server << ")" << std::endl;
 }
 
 void server::bind_socket()
@@ -61,9 +57,7 @@ void server::bind_socket()
     setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     if (bind(this->_fd_server,(struct sockaddr*)&_addr,sizeof(_addr)) < 0)
     {
-        // std::cerr << "Error: Failed to bind socket to port " << _port << std::endl;
-        perror("bind ");
-        throw std::runtime_error("Error: Failed to bind socket to port.!");
+        throw  std::runtime_error("Error: Failed to bind socket to port ");
     }
 }
 
@@ -134,14 +128,15 @@ void server::accept_connection()
     _poll.events = POLLIN;
     _pfds.push_back(_poll);
     ////////////////////////////////////////////////////////////////
-    std::cout << "New client connected. FD: " << client_fd << std::endl;
+   std::cout << "[" << Utils::getTime() << "] Accepted Connection from: 127.0.0.1:" << _port << " (connection " << client_fd << ")" << std::endl;
     ////////////////////////////////////////////////////////////////
     __client.fd = client_fd;
     __client.pass_ok = false;
     __client.user_ok = false;
+    __client.nick_ok = false;
     __client.regestred = false;
     __client.status = false;
-      __client.hostname = getMachineName();
+      __client.hostname = Utils::getMachineName();
     /////////////////////////////////////////////////////////////////
     _clients[client_fd] = __client;
 }
@@ -171,20 +166,32 @@ void server::recv_data(size_t &index)
         return;
     it->second.buffer += std::string(buffer, n);
     std::string line;
-    while (!(line = Extract_data(it->second)).empty())
+   while (!(line = Extract_data(it->second)).empty())
     {
         channel->handle_input(line, it->second);
+
+        if (_clients.find(fd) == _clients.end()) 
+        {
+            this->status = true;
+            break; 
+        }
     }
 }
 
 void server::disconnect_client(size_t &index)
 {
     int fd = _pfds[index].fd;
+
+    std::map<int, client>::iterator it = _clients.find(fd);
+    if (it != _clients.end())
+    {
+        channel->handleQuit("QUIT :Remote host closed the connection", it->second);
+    }
     close(fd);
     _clients.erase(fd);
     _pfds.erase(_pfds.begin() + index);
-    std::cout << "Client disconnected FD: " << fd << std::endl;
 }
+
 
 std::string server::Extract_data(client &c)
 {
@@ -196,7 +203,6 @@ std::string server::Extract_data(client &c)
 
     std::string line = buf.substr(0, pos);
     buf.erase(0, pos + 1);
-
     // Remove trailing '\r' if present
     if (!line.empty() && line[line.size() - 1] == '\r')
         line.erase(line.size() - 1, 1);
@@ -204,18 +210,3 @@ std::string server::Extract_data(client &c)
     return line;
 }
 
-
-#include <unistd.h>
-#include <string>
-
-std::string getMachineName()
-{
-    char hostname[1024];
-
-    if (gethostname(hostname, sizeof(hostname)) == -1)
-        return "unknown";
-
-    hostname[sizeof(hostname) - 1] = '\0'; // safety
-
-    return std::string(hostname);
-}

@@ -3,14 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   server.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: eazmir <eazmir@student.42.fr>              +#+  +:+       +#+        */
+/*   By: haitaabe <haitaabe@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/18 11:09:01 by eazmir            #+#    #+#             */
-<<<<<<< HEAD
-/*   Updated: 2026/04/11 16:18:18 by eazmir           ###   ########.fr       */
-=======
-/*   Updated: 2026/04/08 17:38:34 by eazmir           ###   ########.fr       */
->>>>>>> 04da670 (I ccc)
+/*   Updated: 2026/04/20 17:22:39 by haitaabe         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,10 +14,10 @@
 #define SERVER_HPP
 
 #include <string>
+#include <vector>
 #include <sstream>
 #include "authentication.hpp"
 #include <iostream>
-#include <climits>
 #include <cstring>
 #include <netinet/in.h>
 #include <sys/socket.h>
@@ -43,11 +39,9 @@ class authentication;
 ///////////////////////////////////////////////////////////
 #define BUFFER_SIZE 1024
 #define MAX_CLIENT 1000
-////////////////////////////////////////////////////////////
-
+///////////////////////////////////////////////////////////
 struct client
 {
-    std::string buffer;      // don,t care about this, just for storing incoming data until we get a full line
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     int         fd;          // File descriptor (socket)
     int         status;      // Status code, can define 0=connected, 1=authenticated, etc.
@@ -55,7 +49,7 @@ struct client
     bool        user_ok;     // USER command received
     bool        nick_ok;     // NICK command received
     bool        regestred;   // Fully registered (passed all checks)
-
+    std::string buffer;
     std::string nickname;    // Client's nickname
     std::string username;    // Client's username
     std::string hostname;    // Client's hostname (optional, from getpeername)
@@ -78,8 +72,8 @@ class  server
         std::vector<pollfd> _pfds;
     public:
         server();
-        ~server();
         server(int port,std::string password);
+        ~server();
         ///////////////////////////////////////////////////
         void handleEvent(void);
         void start_listning(void);
@@ -93,5 +87,4 @@ class  server
         void disconnect_client(size_t &index);
         std::string Extract_data(client &c);
 };
-std::string getMachineName();
 #endif

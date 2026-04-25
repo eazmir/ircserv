@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utls.hpp                                           :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: haitaabe <haitaabe@student.42.fr>          +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2026/04/11 21:40:18 by haitaabe          #+#    #+#             */
+/*   Updated: 2026/04/11 21:40:19 by haitaabe         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "server.hpp"
 #include <iomanip>
 
@@ -8,4 +20,7 @@ public:
     static void printClientsInfo(const std::map<int, client> &clients);
     static int validatePort(const std::string &port);
     static int check_port(const std::string &port);
+    static std::string getTime();
+    static std::string getMachineName();
+
 };

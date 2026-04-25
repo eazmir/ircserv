@@ -25,12 +25,12 @@ class authentication
     public:
     authentication();
     authentication(std::string pass);
-    void handlePass(client &client, const std::string &pass);
-    void handleNick(client &client, const std::string &nick);
-    void handleUser(client &client, const std::string &user);
+    int handlePass(client &client, const std::string &pass);
+    int handleNick(client &client, const std::string &nick);
+    int handleUser(client &client, const std::string &user);
     void tryRegister(client &client,const std::string &input);
     void checkRegistration(client &c);
     void send_welcome(client &c);
-    std::string Extract_data(const std::string &data);
+    std::string Extract_user(const std::vector<std::string> &args);
 };
 #endif
