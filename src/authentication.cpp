@@ -25,7 +25,7 @@ int authentication::handlePass(client &c,const std::string &pass)
     std::vector<std::string> args;
     std::stringstream  tokens(pass);
     std::string token;
-    //connect ip port password;
+    //connect <ip> <port> <password>;
     
     while (tokens >> token)
         args.push_back(token);
@@ -157,6 +157,7 @@ void authentication::checkRegistration(client &c)
     if (c.nick_ok && c.pass_ok && c.user_ok)
     {
         Utils::send_welcome(c);
+        Utils::sendAuthWelcome(c);
         c.regestred = true;
     }
 }

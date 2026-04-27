@@ -29,18 +29,18 @@ void managerchannel::handle_input(const std::string &input, client &c)
     std::string cmd;
     ss >> cmd;
 
-    // if (c.first)
-    // {
-    //     Utils::sendWelcome(c.fd);
-    //     c.first = false;
-    // }
     if (cmd == "/connect")
     {
         this->auth.handlePass(c,input);
     }
-    else if (cmd == "/help")
+    else if (c.first && cmd == "/help")
     {
-        Utils::sendHelp(c);
+        Utils::sendHelp(c.fd);
+        c.first = false;
+    }
+    else if (cmd == "/help" && c.regestred)
+    {
+        Utils::helpchannel(c.fd);
     }
     else if (!c.regestred) 
     {
