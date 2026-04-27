@@ -15,6 +15,7 @@
 
 #include <string>
 #include <vector>
+#include <arpa/inet.h>
 #include <sstream>
 #include "authentication.hpp"
 #include <iostream>
@@ -45,10 +46,14 @@ struct client
     ///////////////////////////////////////////////////////////////////////////////////////////////////////////
     int         fd;          // File descriptor (socket)
     int         status;      // Status code, can define 0=connected, 1=authenticated, etc.
+    int         port;
+ 
     bool        pass_ok;     // Password validated
     bool        user_ok;     // USER command received
     bool        nick_ok;     // NICK command received
+    bool        first;
     bool        regestred;   // Fully registered (passed all checks)
+    std::string     ip;
     std::string buffer;
     std::string nickname;    // Client's nickname
     std::string username;    // Client's username

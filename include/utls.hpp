@@ -17,10 +17,13 @@ class Utils
 {
 public:
     static std::string strTrim(const std::string &str);
-    static void printClientsInfo(const std::map<int, client> &clients);
     static int validatePort(const std::string &port);
     static int check_port(const std::string &port);
     static std::string getTime();
     static std::string getMachineName();
+    static void sendHelp(client &c);
+    static void send_welcome(client &c);
+    static void sendAuthWelcome(client &c);
+    static void sendWelcome(int fd);
 
 };

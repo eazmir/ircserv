@@ -30,7 +30,6 @@ class authentication
     int handleUser(client &client, const std::string &user);
     void tryRegister(client &client,const std::string &input);
     void checkRegistration(client &c);
-    void send_welcome(client &c);
     std::string Extract_user(const std::vector<std::string> &args);
 };
 #endif

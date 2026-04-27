@@ -28,10 +28,24 @@ void managerchannel::handle_input(const std::string &input, client &c)
     std::stringstream ss(input);
     std::string cmd;
     ss >> cmd;
-    if (!c.regestred) 
+
+    // if (c.first)
+    // {
+    //     Utils::sendWelcome(c.fd);
+    //     c.first = false;
+    // }
+    if (cmd == "/connect")
     {
-        if (cmd == "pass" || cmd == "user" || cmd == "nick")
-            this->auth.tryRegister(c, input); 
+        this->auth.handlePass(c,input);
+    }
+    else if (cmd == "/help")
+    {
+        Utils::sendHelp(c);
+    }
+    else if (!c.regestred) 
+    {
+        if (cmd == "/user" || cmd == "/nick")
+            this->auth.tryRegister(c, input);
     }
     for (size_t i = 0; i < cmd.size(); i++) 
         cmd[i] = toupper(cmd[i]);
@@ -43,5 +57,8 @@ void managerchannel::handle_input(const std::string &input, client &c)
     else if (cmd == "MODE")    handleMode(input, c);
     else if (cmd == "TOPIC")   handleTopic(input, c);
     else if (cmd == "INVITE")  handleInvite(input, c);
-    else if (cmd == "PRINT")   Utils::printClientsInfo(_clients);
 }
+    // std::cout << "CMD bytes: ";
+    // for (std::string::size_type i = 0; i < cmd.size(); i++)
+    //     std::cout << std::hex << (int)(unsigned char)cmd[i] << " ";
+    // std::cout << std::dec << "\n";

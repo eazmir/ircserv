@@ -19,16 +19,36 @@ authentication::authentication():status(false)
 authentication::authentication(std::string pass):_serverPassword(pass)
 {}
 
+
 int authentication::handlePass(client &c,const std::string &pass)
 {
-    if (c.regestred)
-        return (0);
-    if (pass != _serverPassword)
+    std::vector<std::string> args;
+    std::stringstream  tokens(pass);
+    std::string token;
+    //connect ip port password;
+    
+    while (tokens >> token)
+        args.push_back(token);
+    
+    if (args[1] != c.ip)
     {
-        std::string err = ":ircserv 464 " + (c.nickname.empty() ? "*" : c.nickname) + " :Password incorrect\r\n";
+        std::string err = ":ircserv 464 * :IP incorrect\r\n";
         send(c.fd, err.c_str(), err.size(), 0);
         return (0);
     }
+    else if (std::atoi(args[2].c_str()) != c.port)
+    {
+        std::string err = ":ircserv 464 * :Port incorrect\r\n";
+        send(c.fd, err.c_str(), err.size(), 0);
+        return (0);
+    }
+    else  if (args[3] != _serverPassword)
+    {
+        std::string err = ":ircserv 464 * :Password incorrect\r\n";
+        send(c.fd, err.c_str(), err.size(), 0);
+        return (0);
+    }
+    Utils::sendAuthWelcome(c);
     c.pass_ok = true;
     return (1);
 }
@@ -89,12 +109,7 @@ void authentication::tryRegister(client &c,const std::string &input)
         send(c.fd, err.c_str(), err.size(), 0);
         return;
     }
-    if (cmd == "pass")
-    {
-        if (!handlePass(c,arg[1]))
-            return;
-    }
-    else if (cmd == "user")
+    else if (cmd == "/user")
     {
         // if (arg.size() < 5)
         // {
@@ -107,7 +122,7 @@ void authentication::tryRegister(client &c,const std::string &input)
         name = Extract_user(arg);
         c.realname = name;
     }
-    else if (cmd == "nick")
+    else if (cmd == "/nick")
     {
         if (!handleNick(c,arg[1]))
             return;
@@ -137,20 +152,11 @@ std::string authentication::Extract_user(const std::vector<std::string> &args)
     return (name);
 }
 
-void authentication::send_welcome(client &c)
-{
-    std::string msg; 
-    msg = std::string(":ircserv 001 ") + c.nickname +
-      " :Welcome to the IRC Network, " +
-      c.username + "!\r\n" + '\n'; 
-    send(c.fd,msg.c_str(),strlen(msg.c_str()),1);
-}
-
 void authentication::checkRegistration(client &c)
 {
     if (c.nick_ok && c.pass_ok && c.user_ok)
     {
-        this->send_welcome(c);
+        Utils::send_welcome(c);
         c.regestred = true;
     }
 }
