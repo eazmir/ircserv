@@ -1,20 +1,9 @@
-/* ************************************************************************** */
-/*                                                                            */
-/*                                                        :::      ::::::::   */
-/*   server.hpp                                         :+:      :+:    :+:   */
-/*                                                    +:+ +:+         +:+     */
-/*   By: haitaabe <haitaabe@student.42.fr>          +#+  +:+       +#+        */
-/*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/18 11:09:01 by eazmir            #+#    #+#             */
-/*   Updated: 2026/04/20 17:22:39 by haitaabe         ###   ########.fr       */
-/*                                                                            */
-/* ************************************************************************** */
-
 #ifndef SERVER_HPP
 #define SERVER_HPP
 
 #include <string>
 #include <vector>
+#include <csignal>
 #include <arpa/inet.h>
 #include <sstream>
 #include "authentication.hpp"
@@ -33,6 +22,8 @@
 #include <map>
 #include <set>
 
+//////////////////////////////////////////////////////////
+extern bool g_status;
 ///////////////////////////////////////////////////////////
 // Forward declaration
 class managerchannel;
@@ -72,7 +63,9 @@ class  server
         std::string _password;
         std::map<int ,client> _clients;
         ///////////////////////////////////////////////////
-         managerchannel *channel;   
+         managerchannel *channel; 
+        authentication auth;
+        //////////////////////////////////////////////////  
         struct sockaddr_in _addr;
         std::vector<pollfd> _pfds;
     public:
@@ -91,5 +84,9 @@ class  server
         void recv_data(size_t &index);
         void disconnect_client(size_t &index);
         std::string Extract_data(client &c);
+        ////////////////////////////////////////////////////
+        void clean();
 };
+void signalhandler();
+void bye();
 #endif

@@ -12,11 +12,8 @@
 
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
-
-#include <string>
-#include <vector>
-#include <map>
-#include "../authentication.hpp"
+#include "../../include/server.hpp"
+// #include "../authentication.hpp"
 
 // Forward declaration
 struct client;
@@ -34,27 +31,20 @@ struct Channel
     bool              topic_restricted; // mode +t
 };
 
-struct Message
-{
-    std::string command;
-    std::vector<std::string> args;
-    std::string trailing;
-};
-
 class managerchannel
 {
     private:
-        std::map<int, client> &_clients;
+        std::map<int, client> _clients;
         std::map<std::string, Channel*> channels;
         std::map<std::string, Channel*>::iterator it; 
         std::vector<std::string> tokens;
         std::string channel_name;
         std::string token;
         Channel *ch;
-        authentication auth;
+        // authentication auth;
     public:
         managerchannel(std::map<int, client> &clients,const std::string &pass);
-        void handle_input(const std::string &input, client &c);
+        void handle_input(const std::string &input, client &c,authentication &auth);
         void handleJoin(const std::string &input, client &c);
         void handlePrivmsg(const std::string &input, client &c);
         void handlePart(const std::string &input, client &c);
@@ -64,7 +54,5 @@ class managerchannel
         void handleInvite(const std::string &input, client &c);
         void handleMode(const std::string &input, client &c);
 };
-
-Message parseMessage(const std::string &input);
 
 #endif

@@ -15,14 +15,14 @@
 #include "../../include/server.hpp"
 
 managerchannel::managerchannel(std::map<int, client> &clients,const std::string &pass)
-    : _clients(clients),
-      auth(pass)
+    : _clients(clients)
 {
+    (void)pass;
 }
 
-void managerchannel::handle_input(const std::string &input, client &c)
+void managerchannel::handle_input(const std::string &input, client &c ,authentication &auth)
 {
-     
+
     if (input.empty()) return;
     
     std::stringstream ss(input);
@@ -31,7 +31,7 @@ void managerchannel::handle_input(const std::string &input, client &c)
 
     if (cmd == "/connect")
     {
-        this->auth.handlePass(c,input);
+        auth.handlePass(c,input);
     }
     else if (c.first && cmd == "/help")
     {
@@ -45,7 +45,7 @@ void managerchannel::handle_input(const std::string &input, client &c)
     else if (!c.regestred) 
     {
         if (cmd == "/user" || cmd == "/nick")
-            this->auth.tryRegister(c, input);
+            auth.tryRegister(c, input);
     }
     for (size_t i = 0; i < cmd.size(); i++) 
         cmd[i] = toupper(cmd[i]);

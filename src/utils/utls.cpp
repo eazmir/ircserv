@@ -10,8 +10,9 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/utls.hpp"
-#include "../include/server.hpp"
+#include "../../include/server.hpp"
+#include "../../include/client.hpp"
+#include "../../include/utls.hpp"
 
 std::string Utils::strTrim(const std::string &str) 
 {

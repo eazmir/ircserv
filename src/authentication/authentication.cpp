@@ -10,13 +10,11 @@
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "../include/server.hpp"
-#include "../include/utls.hpp"
+#include "../../include/utls.hpp"
 
-authentication::authentication():status(false)
-{}
-
-authentication::authentication(std::string pass):_serverPassword(pass)
+authentication::authentication(std::map<int,client> &c,std::string &pass):
+_serverPassword(pass),
+_clients(c)
 {}
 
 
@@ -78,14 +76,17 @@ int authentication::handleNick(client &c,const std::string &nick)
         send(c.fd, err.c_str(), err.size(), 0);
         return(0);
     }
-    else if (c.nickname == nick)
+    for (std::map<int, client>::iterator it = _clients.begin(); it != _clients.end(); ++it)
     {
-        std::string err = ":ircserv 433 * " + (c.nickname.empty() ? "*" : c.nickname) + " :Nickname is already in use\r\n";
-        send(c.fd, err.c_str(), err.size(), 0);
-        return (0);
+        if (it->second.nickname == nick)
+        {
+            std::string err = ":ircserv 433 * " + nick + " :Nickname is already in use\r\n";
+            send(c.fd, err.c_str(), err.size(), 0);
+            return 0;
+        }
     }
-    c.nickname = nick;
     c.nick_ok = true;
+    c.nickname = nick;
     return (1);
 }
 

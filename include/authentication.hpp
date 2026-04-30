@@ -14,6 +14,7 @@
 #define AUTHENTICATION_HPP
 
 #include "server.hpp"
+#include <map>
 
 struct client;
 
@@ -21,10 +22,10 @@ class authentication
 {
     private:
         std::string _serverPassword;
-        bool status;
+        std::map<int,client> &_clients;
     public:
-    authentication();
-    authentication(std::string pass);
+    // authentication();
+    authentication(std::map<int,client> &c,std::string &pass);
     int handlePass(client &client, const std::string &pass);
     int handleNick(client &client, const std::string &nick);
     int handleUser(client &client, const std::string &user);
