@@ -19,6 +19,7 @@ server::server():
 
 void server::setup_address()
 {
+     memset(&_addr, 0, sizeof(_addr));
     _addr.sin_family = AF_INET;
     _addr.sin_addr.s_addr = INADDR_ANY;
     _addr.sin_port = htons(_port);
@@ -64,6 +65,7 @@ void server::setup_poll()
 void server::init()
 {
     this->setup_address();
+    this->create_socket();
     this->bind_socket();
     this->start_listning();
     this->setup_poll();
