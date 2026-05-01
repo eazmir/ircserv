@@ -6,7 +6,7 @@ bool g_status = true;
 
 server::~server()
 {
-    delete this->channel;
+    clean();
 }
 
 server::server():
@@ -15,6 +15,7 @@ server::server():
     this->_password.clear();
     this->_port = 0;
     this->status = false;
+    this->_fd_server = -1;
 }
 
 void server::setup_address()
@@ -49,7 +50,7 @@ void server::bind_socket()
     setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     if (bind(this->_fd_server,(struct sockaddr*)&_addr,sizeof(_addr)) < 0)
     {
-        throw std::runtime_error("Port is already in use");
+        throw std::runtime_error("Failed to bind on port "+ Utils::to_str(_port) +"is already in use");
     }
 }
 

@@ -29,5 +29,4 @@ void server::handleEvent()
             }
         }
     }
-    clean();
 }

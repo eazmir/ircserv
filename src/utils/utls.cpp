@@ -172,3 +172,10 @@ void Utils::helpchannel(int fd)
     send(fd, str.c_str(), str.size(), 0);
 }
 
+std::string Utils::to_str(int n)
+{
+    std::ostringstream oss;
+    oss << n;
+    return oss.str();
+}
+

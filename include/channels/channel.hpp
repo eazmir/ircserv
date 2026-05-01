@@ -44,6 +44,7 @@ class managerchannel
         // authentication auth;
     public:
         managerchannel(std::map<int, client> &clients,const std::string &pass);
+        ~managerchannel();
         void handle_input(const std::string &input, client &c,authentication &auth);
         void handleJoin(const std::string &input, client &c);
         void handlePrivmsg(const std::string &input, client &c);

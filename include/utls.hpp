@@ -26,5 +26,6 @@ public:
     static void sendAuthWelcome(client &c);
     static void sendWelcome(int fd);
     static void helpchannel(int fd);
+    static std::string to_str(int n);
 
 };

@@ -14,6 +14,15 @@
 #include "../../include/utls.hpp"
 #include "../../include/server.hpp"
 
+managerchannel::~managerchannel()
+{
+   for (it = channels.begin(); it != channels.end();it++)
+   {
+        delete it->second;
+   }
+   channels.clear();
+}
+
 managerchannel::managerchannel(std::map<int, client> &clients,const std::string &pass)
     : _clients(clients)
 {
@@ -58,7 +67,3 @@ void managerchannel::handle_input(const std::string &input, client &c ,authentic
     else if (cmd == "TOPIC")   handleTopic(input, c);
     else if (cmd == "INVITE")  handleInvite(input, c);
 }
-    // std::cout << "CMD bytes: ";
-    // for (std::string::size_type i = 0; i < cmd.size(); i++)
-    //     std::cout << std::hex << (int)(unsigned char)cmd[i] << " ";
-    // std::cout << std::dec << "\n";
