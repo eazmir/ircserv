@@ -29,6 +29,6 @@ void server::accept_connection()
     __client.first = true;
     __client.hostname = Utils::getMachineName();
     /////////////////////////////////////////////////////////////////
-    Utils::sendWelcome(client_fd);
+    // Utils::sendWelcome(client_fd);
     _clients[client_fd] = __client;
 }

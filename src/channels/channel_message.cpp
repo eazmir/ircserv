@@ -14,7 +14,14 @@
 #include "../../include/utls.hpp"
 #include "../../include/server.hpp"
 
-void managerchannel::handlePrivmsg(const std::string &input, client &c) {
+void managerchannel::handlePrivmsg(const std::string &input, client &c) 
+{
+    if (!c.regestred)
+    {
+        std::string err = ":ircserv 451 * :You have not registered\r\n";
+        send(c.fd, err.c_str(), err.size(), 0);
+        return;
+    }
     std::stringstream ss(input);
     std::string command, target;
     ss >> command >> target;
@@ -39,7 +46,7 @@ void managerchannel::handlePrivmsg(const std::string &input, client &c) {
         full_msg = full_msg.substr(0, 510);
     }
     full_msg += "\r\n";
-
+    /// PRIVMASG NICK: hello 
     // 3. Routing & Security Gates
     if (target[0] == '#') {
         // --- CHANNEL BROADCAST ---

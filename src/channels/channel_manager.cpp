@@ -32,28 +32,31 @@ managerchannel::managerchannel(std::map<int, client> &clients,const std::string 
 void managerchannel::handle_input(const std::string &input, client &c ,authentication &auth)
 {
 
-    if (input.empty()) return;
-    
+    if (input.empty()) 
+        return;
+   
     std::stringstream ss(input);
     std::string cmd;
+    
     ss >> cmd;
-
-    if (cmd == "/connect")
+    if (cmd == "CAP")
     {
-        auth.handlePass(c,input);
+            std::string msg = ":ircserv CAP * LS :\r\n";
+            send(c.fd, msg.c_str(), msg.size(), 0);
+            return;
     }
-    else if (c.first && cmd == "/help")
-    {
-        Utils::sendHelp(c.fd);
-        c.first = false;
-    }
-    else if (cmd == "/help" && c.regestred)
+    // else if (c.first && cmd == "/help")
+    // {
+    //     Utils::sendHelp(c.fd);
+    //     c.first = false;
+    // }
+    else if (cmd == "HELP" && c.regestred)
     {
         Utils::helpchannel(c.fd);
     }
-    else if (!c.regestred) 
+    if (!c.regestred)
     {
-        if (cmd == "/user" || cmd == "/nick")
+        if (cmd == "USER" || cmd == "NICK" || cmd == "PASS")
             auth.tryRegister(c, input);
     }
     for (size_t i = 0; i < cmd.size(); i++) 
@@ -61,7 +64,7 @@ void managerchannel::handle_input(const std::string &input, client &c ,authentic
     if (cmd == "JOIN")         handleJoin(input, c);
     else if (cmd == "PART")    handlePart(input, c);
     else if (cmd == "QUIT")    handleQuit(input, c);
-    else if (cmd == "MSG") handlePrivmsg(input, c);
+    else if (cmd == "PRIVMSG") handlePrivmsg(input, c);
     else if (cmd == "KICK")    handleKick(input, c);
     else if (cmd == "MODE")    handleMode(input, c);
     else if (cmd == "TOPIC")   handleTopic(input, c);

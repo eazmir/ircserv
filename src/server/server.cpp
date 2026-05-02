@@ -50,7 +50,7 @@ void server::bind_socket()
     setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     if (bind(this->_fd_server,(struct sockaddr*)&_addr,sizeof(_addr)) < 0)
     {
-        throw std::runtime_error("Failed to bind on port "+ Utils::to_str(_port) +"is already in use");
+        throw std::runtime_error("Failed to bind on port "+ Utils::to_str(_port) +" already in use");
     }
 }
 
@@ -77,7 +77,6 @@ _port(port),
 _password(password),
 auth(_clients,password)
 {
-    
     channel = new managerchannel(_clients,password); 
     this->init();
     this->handleEvent();

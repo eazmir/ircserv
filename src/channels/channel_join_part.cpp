@@ -18,8 +18,10 @@
 
 void managerchannel::handleJoin(const std::string &input, client &c)
 {
-    if (!c.regestred) {
-        std::cout << "Error: Client not registered" << std::endl;
+    if (!c.regestred) 
+    {
+        std::string err = ":ircserv 451 * :You have not registered\r\n";
+        send(c.fd, err.c_str(), err.size(), 0);
         return;
     }
 
@@ -49,6 +51,11 @@ void managerchannel::handleJoin(const std::string &input, client &c)
         this->ch = New_ch;
         this->ch->members.push_back(c.fd);
         this->ch->operators.push_back(c.fd);
+        std::cout << "[" << Utils::getTime() << "] "
+          << "User " << c.nickname << "!" << c.username << "@" << c.hostname
+          << " joined to the channel "
+          << "(" << channel_name << ")"
+          << std::endl;
     }
     else {
         this->ch = it->second;
@@ -208,5 +215,9 @@ void managerchannel::handleQuit(const std::string &input, client &c)
             ++it;
         }
     }
-    std::cout <<"["<<Utils::getTime()<<"] "<< "[quit] User " << c.nickname << " has left the server." << std::endl;
+    std::cout << "[" << Utils::getTime() << "] "
+          << "[QUIT] User " << c.nickname
+          << " left the server (fd=" << c.fd
+          << ", ip=" << c.ip << ":" << c.port << ")"
+          << std::endl;
 }

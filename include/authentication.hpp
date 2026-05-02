@@ -24,13 +24,12 @@ class authentication
         std::string _serverPassword;
         std::map<int,client> &_clients;
     public:
-    // authentication();
-    authentication(std::map<int,client> &c,std::string &pass);
-    int handlePass(client &client, const std::string &pass);
-    int handleNick(client &client, const std::string &nick);
-    int handleUser(client &client, const std::string &user);
-    void tryRegister(client &client,const std::string &input);
-    void checkRegistration(client &c);
-    std::string Extract_user(const std::vector<std::string> &args);
+        authentication(std::map<int,client> &c,std::string &pass);
+        int handlePass(client &client, const std::string &pass);
+        int handleNick(client &client, const std::string &nick);
+        int handleUser(client &client, const std::string &user);
+        void tryRegister(client &client,const std::string &input);
+        void checkRegistration(client &c);
+        std::string Extract_user(const std::vector<std::string> &args);
 };
 #endif
