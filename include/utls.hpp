@@ -27,5 +27,6 @@ public:
     static void sendWelcome(int fd);
     static void helpchannel(int fd);
     static std::string to_str(int n);
+    static void sendRegistrationHelp(int fd);
 
 };

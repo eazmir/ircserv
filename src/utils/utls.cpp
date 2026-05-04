@@ -78,35 +78,6 @@ std::string Utils::getMachineName()
     return std::string(hostname);
 }
 
-
-void Utils::sendHelp(int fd)
-{
-    std::stringstream os;
-    
-    os << std::left;
-    os << "+______________________________________________________________+\r\n";
-    os << "| " << std::setw(61) << "              Welcome to Our IRC Server!"             << "|\r\n";
-    os << "+______________________________________________________________+\r\n";
-    os << "| " << std::setw(61) << "            You connected successfully!"              << "|\r\n";
-    os << "| " << std::setw(61) << "  Complete your registration using the commands below." << "|\r\n";
-    os << "+______________________________________________________________+\r\n";
-    os << "| " << std::setw(61) << "                  AVAILABLE COMMANDS"                << "|\r\n";
-    os << "+______________________________________________________________+\r\n";
-    os << "| " << std::setw(14) << "  nickname" << ": " << std::setw(45) << "/nick <nickname>"                     << "|\r\n";
-    os << "| " << std::setw(14) << "  username" << ": " << std::setw(45) << "/user <username> <*> <0> :<realname>" << "|\r\n";
-    os << "+______________________________________________________________+\r\n";
-
-    std::string str = os.str();
-    // std::cout<<str<<std::endl;
-    send(fd, str.c_str(), str.size(), 0);
-}
-
-void Utils::sendAuthWelcome(client &c)
-{
-    std::string msg = "Authentication successful. Type /help for more information.\r\n";
-    send(c.fd,msg.c_str(),msg.size(),0);
-}
-
 void Utils::send_welcome(client &c)
 {
     std::string msg; 
@@ -118,23 +89,38 @@ void Utils::send_welcome(client &c)
 
 void Utils::sendWelcome(int fd)
 {
+    std::string msg = 
+    "(_)_ __ ___ ___  ___ _ ____   __\r\n"
+    "| | '__/ __/ __|/ _ \\ '__\\ \\ / /\r\n"
+    "| | | | (__\\__ \\  __/ |   \\ V /\r\n" 
+    "|_|_|  \\___|___/\\___|_|    \\_/\r\n"
+    "::ircserv NOTICE * :Welcome to Our IRC Server\r\n"
+    "::ircserv NOTICE * :New to IRC? Type /HELP for assistance\r\n";
+    send(fd, msg.c_str(), msg.size(), 0);
+}
+
+void Utils::sendRegistrationHelp(int fd)
+{
+    (void)fd;
     std::stringstream os;
-    os << std::left;
 
-    os << "+______________________________________________________________+\r\n";
-    os << "| " << std::setw(61) << "             Connected to IRC Server!" << "|\r\n";
-    os << "+______________________________________________________________+\r\n";
-    os << "| " << std::setw(61) << "   To connect to the server, use:"       << "|\r\n";
-    os << "| " << std::setw(61) << ""                                        << "|\r\n";
-    os << "| " << std::setw(61) << "   CONNECT COMMAND:"                     << "|\r\n";
-    os << "| " << std::setw(61) << "      /connect <ip> <port> <password>"   << "|\r\n";
-    os << "| " << std::setw(61) << ""                                        << "|\r\n";
-    os << "| " << std::setw(61) << "   EXAMPLE:"                             << "|\r\n";
-    os << "| " << std::setw(61) << "      /connect 127.0.0.1 4444 mypassword" << "|\r\n";
-    os << "+______________________________________________________________+\r\n";
+     os << "+_____________________________________________________________________+\r\n";;
+    os << "| " << std::setw(68) << std::left
+       << "Welcome to Our IRC Server!" << "|\r\n";
+    os << "++                                                                   ++\n\r";
+    os << "| " << std::setw(68) << std::left
+       << "Password  : PASS <password>" << "|\r\n";
+    os << "| " << std::setw(68) << std::left
+       << "Username  : USER <username> <hostname> <servername>: <realname>" << "|\r\n";
+    os << "| " << std::setw(68) << std::left
+       << "Nickname  : NICK <nickname>" << "|\r\n";
+    os << "| " << std::setw(68) << std::left
+       << "\033[4;34mNote: USER <username> 0 * :<realname> (hostname/servername ignored)\033[0m"
+<< " |\r\n";
+    os << "+_____________________________________________________________________+\r\n";
 
-    std::string str = os.str();
-    send(fd, str.c_str(), str.size(), 0);
+    std::string msg = os.str();
+    send(fd, msg.c_str(), msg.size(), 0);
 }
 
 void Utils::helpchannel(int fd)

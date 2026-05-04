@@ -34,12 +34,6 @@ int authentication::handleUser(client &c,const std::string &user)
 {
     if (c.regestred)
         return (0);
-    else if (user.size() > 10)
-    {
-        std::string err = ":ircserv 432 * USER :Invalid username length (max 10)\r\n";
-        send(c.fd, err.c_str(), err.size(), 0);
-        return (0);
-    }
     c.username = user;
     c.user_ok = true;
     return (1);
@@ -142,7 +136,6 @@ void authentication::checkRegistration(client &c)
     if (c.nick_ok && c.pass_ok && c.user_ok)
     {
         Utils::send_welcome(c);
-        // Utils::sendAuthWelcome(c);
         c.regestred = true;
     }
 }

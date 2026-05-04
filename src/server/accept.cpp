@@ -10,7 +10,6 @@ void server::accept_connection()
     socklen_t len = sizeof(client_addr);
 
     int client_fd = accept(_fd_server, (struct sockaddr*)&client_addr, &len); 
-    // int client_fd = accept(_fd_server,NULL,NULL);
     _poll.fd = client_fd;
     _poll.events = POLLIN;
     _pfds.push_back(_poll);
@@ -20,7 +19,6 @@ void server::accept_connection()
     __client.fd = client_fd;
     __client.port = _port;
     __client.ip = inet_ntoa(client_addr.sin_addr);
-    // __client.ip = "127.0.0.1";
     __client.pass_ok = false;
     __client.user_ok = false;
     __client.nick_ok = false;
@@ -29,6 +27,6 @@ void server::accept_connection()
     __client.first = true;
     __client.hostname = Utils::getMachineName();
     /////////////////////////////////////////////////////////////////
-    // Utils::sendWelcome(client_fd);
+    Utils::sendWelcome(client_fd);
     _clients[client_fd] = __client;
 }
