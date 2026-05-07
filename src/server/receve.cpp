@@ -14,64 +14,28 @@ void server::recv_data(size_t &index)
         return;
 
     char tmp[1024];
-    int n = recv(fd, tmp, sizeof(tmp) - 1, 0);
-    if (n <= 0)
+    int n = recv(fd, tmp, sizeof(tmp), 0);
+    if (n < 0)
+    {
+        perror("recv");
+        return;   
+    }
+    if (n == 0)
     {
         this->disconnect_client(index);
         this->status = true;
         return;
     }
-    
-    tmp[n] = '\0';
-    it->second.buffer.append(tmp, n);
-    std::string line;
-    while (!(line = Extract_data(it->second)).empty())
+    else if (n > 0)
     {
-        channel->handle_input(line, it->second,auth);
-        if (_clients.find(fd) == _clients.end())
+        it->second.buffer.append(tmp,n);
+        std::string line = extract_data(it->second);
+        while (!line.empty())
         {
-            this->status = true;
-            break;
+            this->channel->handle_input(line,it->second,auth);
+            line = extract_data(it->second);
+            if (_clients.find(fd) == _clients.end())
+                break;
         }
     }
 }
-
-////------------- new version in progress ...
-// void server::recv_data(size_t &index)
-// {
-//     int fd = _pfds[index].fd;
-
-//     if (fd == _fd_server)
-//         return;
-
-//     std::map<int, client>::iterator it = _clients.find(fd);
-//     if (it == _clients.end())
-//         return;
-
-//     char tmp[1024];
-
-//     int n = recv(fd, tmp, sizeof(tmp), 0);
-//     if (n <= 0)
-//     {
-//         this->disconnect_client(index);
-//         this->status = true;
-//         return;
-//     }
-
-//     it->second.buffer.append(tmp, n);
-
-//     while (true)
-//     {
-//         std::string line = Extract_data(it->second);
-//         if (line.empty())
-//             break;
-
-//         channel->handle_input(line, it->second, auth);
-
-//         if (_clients.find(fd) == _clients.end())
-//         {
-//             this->status = true;
-//             return;
-//         }
-//     }
-// }

@@ -84,7 +84,7 @@ void Utils::send_welcome(client &c)
     msg = std::string(":ircserv 001 ") + c.nickname +
       " :Welcome to the IRC Network, " +
       c.username + "!\r\n" + '\n'; 
-    send(c.fd,msg.c_str(),strlen(msg.c_str()),1);
+    send(c.fd,msg.c_str(),strlen(msg.c_str()),0);
 }
 
 void Utils::sendWelcome(int fd)

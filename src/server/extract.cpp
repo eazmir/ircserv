@@ -19,7 +19,7 @@
 //     return line;
 // }
 
-std::string server::Extract_data(client &c)
+std::string server::extract_data(client &c)
 {
     std::string &buf = c.buffer;
 
@@ -29,6 +29,5 @@ std::string server::Extract_data(client &c)
 
     std::string line = buf.substr(0, pos);
     buf.erase(0, pos + 2);
-
-    return line;
+    return (line);
 }

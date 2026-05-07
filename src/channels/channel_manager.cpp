@@ -34,23 +34,18 @@ void managerchannel::handle_input(const std::string &input, client &c ,authentic
 
     if (input.empty()) 
         return;
-   
+    
     std::stringstream ss(input);
     std::string cmd;
-    
+
     ss >> cmd;
-    if (cmd == "CAP")
-    {
-        std::string msg = ":ircserv CAP * LS :\r\n";
-        send(c.fd, msg.c_str(), msg.size(), 0);
-        return;
-    }
-    else if (c.first && cmd == "/HELP")
+
+    if (c.first && cmd == "HELP")
     {
         Utils::sendRegistrationHelp(c.fd);
         c.first = false;
     }
-    else if (cmd == "/HELP" && c.regestred)
+    else if (cmd == "HELP" && c.regestred)
     {
         Utils::helpchannel(c.fd);
     }

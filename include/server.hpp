@@ -83,7 +83,7 @@ class  server
         void accept_connection();
         void recv_data(size_t &index);
         void disconnect_client(size_t &index);
-        std::string Extract_data(client &c);
+        std::string extract_data(client &c);
         ////////////////////////////////////////////////////
         void clean();
 };
