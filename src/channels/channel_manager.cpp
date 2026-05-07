@@ -16,11 +16,11 @@
 
 managerchannel::~managerchannel()
 {
-   for (it = channels.begin(); it != channels.end();it++)
-   {
+    for (it = channels.begin(); it != channels.end();it++)
+    {
         delete it->second;
-   }
-   channels.clear();
+    }
+    channels.clear();
 }
 
 managerchannel::managerchannel(std::map<int, client> &clients,const std::string &pass)
@@ -40,12 +40,12 @@ void managerchannel::handle_input(const std::string &input, client &c ,authentic
 
     ss >> cmd;
 
-    if (c.first && cmd == "HELP")
+    if (c.first && cmd == "/HELP")
     {
         Utils::sendRegistrationHelp(c.fd);
         c.first = false;
     }
-    else if (cmd == "HELP" && c.regestred)
+    else if (cmd == "/HELP" && c.regestred)
     {
         Utils::helpchannel(c.fd);
     }
@@ -64,4 +64,4 @@ void managerchannel::handle_input(const std::string &input, client &c ,authentic
     else if (cmd == "MODE")    handleMode(input, c);
     else if (cmd == "TOPIC")   handleTopic(input, c);
     else if (cmd == "INVITE")  handleInvite(input, c);
-}
+}                          

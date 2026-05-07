@@ -13,6 +13,7 @@
 #ifndef CHANNEL_HPP
 #define CHANNEL_HPP
 #include "../../include/server.hpp"
+// #include "../authentication.hpp"
 
 // Forward declaration
 struct client;
@@ -33,7 +34,7 @@ struct Channel
 class managerchannel
 {
     private:
-        std::map<int, client> _clients;
+        std::map<int, client> &_clients;
         std::map<std::string, Channel*> channels;
         std::map<std::string, Channel*>::iterator it; 
         std::vector<std::string> tokens;
@@ -41,7 +42,7 @@ class managerchannel
         std::string token;
         Channel *ch;
         std::vector<std::string> splitByComma(const std::string &s);
-
+        // authentication auth;
     public:
         managerchannel(std::map<int, client> &clients,const std::string &pass);
         ~managerchannel();

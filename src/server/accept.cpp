@@ -13,20 +13,22 @@ void server::accept_connection()
     _poll.fd = client_fd;
     _poll.events = POLLIN;
     _pfds.push_back(_poll);
-    ////////////////////////////////////////////////////////////////
-    std::cout << "[" << Utils::getTime() << "] Accepted Connection from: 127.0.0.1:" << _port << " (connection " << client_fd << ")" << std::endl;
-    ////////////////////////////////////////////////////////////////
     __client.fd = client_fd;
-    __client.port = _port;
+    // __client.port = _port;
+    // __client.ip = inet_ntoa(client_addr.sin_addr);
     __client.ip = inet_ntoa(client_addr.sin_addr);
+    __client.port = ntohs(client_addr.sin_port);
     __client.pass_ok = false;
     __client.user_ok = false;
     __client.nick_ok = false;
     __client.regestred = false;
     __client.status = false;
     __client.first = true;
+    std::cout << "[" << Utils::getTime() 
+    << "] Accepted Connection from: "<<__client.ip <<":"
+    << __client.port << " (connection " << client_fd << ")" 
+    << std::endl;
     __client.hostname = Utils::getMachineName();
-    /////////////////////////////////////////////////////////////////
     Utils::sendWelcome(client_fd);
     _clients[client_fd] = __client;
 }
