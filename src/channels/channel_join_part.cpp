@@ -14,8 +14,7 @@
 #include "../../include/utls.hpp"
 #include "../../include/server.hpp"
 
-namespace
-{
+
     void removeClientFromChannel(Channel *room, int fd)
     {
         for (std::vector<int>::iterator it = room->members.begin(); it != room->members.end();)
@@ -34,7 +33,6 @@ namespace
                 ++it;
         }
     }
-}
 
 
 
