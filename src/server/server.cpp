@@ -46,8 +46,6 @@ void server::start_listning()
 
 void server::bind_socket()
 {
-    int opt = 1;
-    setsockopt(this->_fd_server, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
     if (bind(this->_fd_server,(struct sockaddr*)&_addr,sizeof(_addr)) < 0)
     {
         throw std::runtime_error("port: "+ Utils::to_str(_port) +" already in use");
