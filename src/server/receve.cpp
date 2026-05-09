@@ -22,8 +22,8 @@ void server::recv_data(size_t &index)
     }
     if (n == 0)
     {
-        this->disconnect_client(index);
-        this->status = true;
+        disconnect_client(index);
+        status = true;
         return;
     }
     else if (n > 0)

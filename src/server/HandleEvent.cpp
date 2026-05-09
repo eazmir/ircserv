@@ -12,17 +12,17 @@ void server::handleEvent()
         {
             if (this->_pfds[client_index].revents & POLLIN)
             {
-                if (this->_fd_server == this->_pfds[client_index].fd)
+                if (_fd_server == _pfds[client_index].fd)
                 {
-                    this->accept_connection();
+                    accept_connection();
                     client_index++;
                 }
                 else
                 {
-                    this->recv_data(client_index);
-                    if (this->status)
+                    recv_data(client_index);
+                    if (status)
                     {
-                        this->status = false;
+                        status = false;
                         client_index--;
                     }
                 }   
